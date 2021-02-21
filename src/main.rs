@@ -98,7 +98,8 @@ impl DataDir {
 
             Self::new(exe)
         } else {
-            if let Some(exe) = std::env::current_exe().ok() {
+            if let Some(mut exe) = std::env::current_exe().ok() {
+                exe.pop();
                 let path = exe.join("../share/dmoji");
 
                 if path.join(EMOJI_SEQUENCES).is_file() {
