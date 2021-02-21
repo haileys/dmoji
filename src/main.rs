@@ -1,4 +1,3 @@
-use std::borrow::Cow;
 use std::collections::HashMap;
 use std::io::{Read, Write};
 use std::ops::RangeInclusive;
@@ -146,13 +145,14 @@ fn main() {
     for em in emoji {
         match em.sequence {
             Sequence::Literal(seq) => {
-                map.insert(Cow::Borrowed(em.description), seq);
+                map.insert(em.description, seq);
             }
             Sequence::Range(chars) => {
-                for (idx, ch) in chars.enumerate() {
-                    let name = format!("{}-{}", em.description, idx);
-                    map.insert(Cow::Owned(name), ch.to_string());
-                }
+                // for some reason the unicode.org data file includes a bunch
+                // of unrelated emojis in ranges. I have no idea why this is,
+                // or what to do about it, so for now let's only use the first
+                // emoji in a range
+                map.insert(em.description, chars.start().to_string());
             }
         }
     }
